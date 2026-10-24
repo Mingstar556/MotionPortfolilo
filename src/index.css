@@ -1,0 +1,143 @@
+/* ============================================================
+   Mainframe — index.css
+   Tokens, layers, and motion primitives.
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Layer order (no specificity wars) ---- */
+@layer reset, base, layout, components, motion, utilities, overrides;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; }
+  html { -webkit-text-size-adjust: 100%; interpolate-size: allow-keywords; scroll-behavior: smooth; }
+  body { min-height: 100svh; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  img, picture, video, canvas, svg { display: block; max-width: 100%; }
+  input, button, textarea, select { font: inherit; color: inherit; }
+  p, h1, h2, h3, h4 { overflow-wrap: break-word; }
+  h1, h2, h3 { text-wrap: balance; }
+  :target { scroll-margin-block: 5svh; }
+}
+
+@layer base {
+  :root {
+    /* 1 · PRIMITIVE */
+    --ink-900: #0b0b0c;
+    --ink-700: #2a2a2e;
+    --ink-500: #6b6b72;
+    --ink-300: #a8a8af;
+    --ink-100: #e6e6e9;
+    --paper: #faf9f7;
+    --ember-500: #c8502b;
+    --ember-600: #a84023;
+
+    /* 2 · SEMANTIC */
+    --bg: var(--paper);
+    --surface: #ffffff;
+    --surface-sunk: var(--ink-100);
+    --border: color-mix(in oklab, var(--ink-500) 22%, transparent);
+    --text: var(--ink-900);
+    --text-muted: var(--ink-500);
+    --accent: var(--ember-500);
+    --accent-hover: var(--ember-600);
+    --accent-on: var(--paper);
+    --focus: var(--ember-500);
+
+    /* 3 · COMPONENT */
+    --btn-radius: 999px;
+    --nav-radius: 999px;
+
+    /* Type scale — real jump, clamp() with rem intercept */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.375rem);
+    --text-h3: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+    --text-h2: clamp(2.25rem, 1.5rem + 3.6vw, 4.5rem);
+    --text-h1: clamp(3.5rem, 1.4rem + 9.6vw, 10rem);
+
+    /* Space */
+    --space-2xs: .5rem;
+    --space-xs: .75rem;
+    --space-s: 1rem;
+    --space-m: 1.5rem;
+    --space-l: 2.5rem;
+    --space-xl: 4rem;
+    --space-2xl: 6rem;
+    --space-3xl: 9rem;
+    --section-tight: clamp(3rem, 2rem + 4vw, 6rem);
+    --section-normal: clamp(5rem, 3rem + 7vw, 10rem);
+    --section-loose: clamp(8rem, 4rem + 12vw, 18rem);
+
+    /* Motion tokens */
+    --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-elastic: cubic-bezier(0.5, 0, 0.1, 1.15);
+    --dur-fast: 120ms;
+    --dur-base: 320ms;
+    --dur-slow: 560ms;
+    --dur-entrance: 400ms;
+  }
+
+  * { font-family: var(--font-body); }
+
+  h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; }
+
+  /* Reduced motion — the still frame is the page */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---- Custom properties for fonts (declared here so utilities read them) ---- */
+:root {
+  --font-heading: 'HelveticaNowDisplay-Medium', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'HelveticaNowDisplayW01-Rg', 'Helvetica Neue', Arial, sans-serif;
+}
+
+@layer components {
+  /* The cursor */
+  .cursor-blink {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: #000;
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Pill entrance — fade + slide up, independent of typewriter */
+  .pill-enter {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-entrance) ease, transform var(--dur-entrance) ease;
+  }
+  .pill-enter.is-visible { opacity: 1; transform: translateY(0); }
+
+  /* Hamburger X transform */
+  .hamburger-top.is-open { transform: rotate(45deg) translateY(7px); }
+  .hamburger-middle.is-open { opacity: 0; }
+  .hamburger-bottom.is-open { transform: rotate(-45deg) translateY(-7px); }
+
+  /* Mobile menu transition */
+  .mobile-menu {
+    transition: opacity 300ms ease, pointer-events 300ms ease;
+  }
+  .mobile-menu.is-open { opacity: 1; pointer-events: auto; }
+  .mobile-menu.is-closed { opacity: 0; pointer-events: none; }
+}
